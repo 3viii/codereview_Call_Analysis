@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Call Analysis Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>body{font-family:Arial, sans-serif;margin:20px;} .card{border:1px solid #ddd;padding:12px;border-radius:6px;margin-bottom:12px;} </style>
+</head>
+<body>
+  <h1>Call Analysis Dashboard (Phase I)</h1>
+  {% if data %}
+    <div class="card">
+      <h3>Call Summary</h3>
+      <p><b>Timestamp:</b> {{ data.timestamp }}</p>
+      <p><b>Intent:</b> {{ data.intent }}</p>
+      <p><b>Amounts:</b> {{ data.entities.Amount | join(', ') if data.entities and data.entities.Amount else '-' }}</p>
+      <p><b>Dates:</b> {{ data.entities.Date | join(', ') if data.entities and data.entities.Date else '-' }}</p>
+      <p><b>Modes:</b> {{ data.entities.Mode | join(', ') if data.entities and data.entities.Mode else '-' }}</p>
+    </div>
+    <div class="card">
+      <h3>Scores</h3>
+      <canvas id="scoresChart" width="400" height="200"></canvas>
+    </div>
+    <div class="card">
+      <h3>Transcript</h3>
+      <pre style="background:#f4f4f4;padding:10px;">{% for t in data.turns %}{{ '[' + t.speaker.upper() + '] ' + t.text + '\\n' }}{% endfor %}</pre>
+    </div>
+    <script>
+      const scores = {{ data.scores | tojson }};
+      const labels = Object.keys(scores);
+      const values = Object.values(scores);
+      const ctx = document.getElementById('scoresChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{ label: 'Score', data: values }]
+        },
+        options: { scales: { y: { beginAtZero: true, max: 10 } } }
+      });
+    </script>
+  {% else %}
+    <p>No data found. Run <code>python main.py</code> to generate sample analysis.</p>
+  {% endif %}
+</body>
+</html>

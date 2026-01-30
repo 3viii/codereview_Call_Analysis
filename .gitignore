@@ -1,0 +1,29 @@
+# ---- Virtual Environments ----
+.venv/
+.venv_new/
+.venv_pyannote2/
+
+# ---- Python Cache ----
+__pycache__/
+*.pyc
+
+# ---- OS ----
+.DS_Store
+
+# ---- Config / Secrets ----
+.env
+config.json
+
+# ---- Outputs / Temp ----
+outputs/
+tmp_uploads/
+
+# ---- Audio / Media (DO NOT COMMIT) ----
+*.wav
+*.mp3
+*.ogg
+
+# ---- Images not needed for code ----
+*.jpeg
+*.jpg
+*.png

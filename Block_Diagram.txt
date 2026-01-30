@@ -1,0 +1,2 @@
+Block Diagram: Audio Input -> ASR + Diarization -> NLP Pipeline -> Scoring Engine -> Storage -> Reporting / Dashboard
+Color theme: Grey(Input), Blue(Processing), Dark Grey(Storage), Green(Output)

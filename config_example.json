@@ -1,0 +1,5 @@
+{
+  "use_api": "whisper_simple",
+  "openai_key": "YOUR_OPENAI_KEY_HERE",
+  "google_credentials_path": "path/to/google_credentials.json"
+}
