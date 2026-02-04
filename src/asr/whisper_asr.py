@@ -33,23 +33,42 @@ class WhisperASR(ASRInterface):
         if not os.path.exists(audio_path):
              raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-        segments_raw, info = self.model.transcribe(audio_path)
+        # Configure transcription options for finer granularity
+        options = {
+            "vad_filter": True,
+            "vad_parameters": dict(min_silence_duration_ms=500),
+            "word_timestamps": True,
+            "condition_on_previous_text": False,
+        }
+        
+        segments_raw, info = self.model.transcribe(audio_path, **options)
         
         segments = []
         full_text_parts = []
         
         # segments_raw is a generator
         for seg in segments_raw:
-            text = seg.text.strip()
-            if not text:
-                continue
-            segments.append({
-                "start": seg.start,
-                "end": seg.end,
-                "text": text,
-                "speaker": "unknown" 
-            })
-            full_text_parts.append(text)
+            # Usage of word timestamps to flatten to word-level segments
+            if seg.words:
+                for w in seg.words:
+                    segments.append({
+                        "start": w.start,
+                        "end": w.end,
+                        "text": w.word.strip(),
+                        "speaker": "unknown"
+                    })
+                full_text_parts.append(seg.text.strip())
+            else:
+                # Fallback if no words (shouldn't happen with word_timestamps=True usually)
+                text = seg.text.strip()
+                if text:
+                    segments.append({
+                        "start": seg.start,
+                        "end": seg.end,
+                        "text": text,
+                        "speaker": "unknown"
+                    })
+                    full_text_parts.append(text)
             
         full_transcript = " ".join(full_text_parts)
         return full_transcript, segments

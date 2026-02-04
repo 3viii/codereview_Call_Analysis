@@ -92,34 +92,25 @@ def pretty_transcript_html(transcript, turns):
     for t in turns:
         txt = t.get("text", "")
         role_raw = t.get("role")
-        speaker_default = t.get("speaker", "SPEAKER_UNKNOWN")
         
-        # Determine display label
-        if role_raw and role_raw.upper() in ["COLLECTOR", "DEBTOR"]:
-            display_role = role_raw.upper()
-        else:
-            display_role = f"{t.get('speaker', 'SPEAKER')} (role undetermined)"
-
+        # Determine display label - STRICT CONTRACT
+        # Pipeline now enforces "COLLECTOR" or "DEBTOR" if known.
+        display_role = role_raw
+        
         conf = t.get("confidence", 0.0)
         
         # Styles
         style_extra = ""
-        # Low confidence (< 0.5) gets a warning border
-        # if conf < 0.6 and conf > 0:
-        #    style_extra = "border-left: 3px solid #ff4b4b;"
-            
         conf_badge = "" 
-        # Hidden for demo clarity
-        # if conf > 0:
-        #    conf_badge = f"<span style='font-size:0.7em; opacity:0.6; margin-left:8px'>({int(conf*100)}% conf)</span>"
         
         if display_role == "COLLECTOR":
              out_lines.append(f'<div style="background:#073642;margin:6px 0;padding:8px;border-radius:6px;{style_extra}"><strong style="color:#9be7ff">COLLECTOR:</strong> {txt} {conf_badge}</div>')
         elif display_role == "DEBTOR":
              out_lines.append(f'<div style="background:#0f291e;margin:6px 0;padding:8px;border-radius:6px;{style_extra}"><strong style="color:#4ade80">DEBTOR:</strong> {txt} {conf_badge}</div>')
         else:
-             # Unknown / Fallback
-             out_lines.append(f'<div style="background:#111827;color:#e6eef8;margin:6px 0;padding:8px;border-radius:6px;{style_extra}"><strong style="color:#888">{display_role}:</strong> {txt} {conf_badge}</div>')
+             # Unknown / Fallback - Just show speaker name, no "undetermined" text
+             spk_label = t.get('speaker', 'SPEAKER_UNKNOWN').replace(" (undetermined)", "")
+             out_lines.append(f'<div style="background:#111827;color:#e6eef8;margin:6px 0;padding:8px;border-radius:6px;{style_extra}"><strong style="color:#888">{spk_label}:</strong> {txt} {conf_badge}</div>')
     return "<div>" + "\n".join(out_lines) + "</div>"
 
 # ---------- UI: header ----------
