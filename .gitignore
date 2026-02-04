@@ -27,3 +27,18 @@ tmp_uploads/
 *.jpeg
 *.jpg
 *.png
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+venv_py311/
+.venv/
+.env/
+
+# OS
+.DS_Store
+
+# HuggingFace cache
+.cache/
